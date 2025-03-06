@@ -2,8 +2,11 @@ import streamlit as st
 import json
 from qa import qa_functionality  # Import the Q&A functionality
 
-# Title of the app
-st.title("Basic Streamlit App")
+# Function to load user credentials from a JSON file
+def load_user_credentials():
+    with open('users.json') as f:
+        data = json.load(f)
+    return data['users']
 
 # Function to simulate fetching JSON payload based on a link
 def fetch_json_payload(link):
