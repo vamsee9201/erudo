@@ -111,15 +111,23 @@ if tab == "Admin":
     json_payload = st.session_state.json_payload
 
     # Existing admin functionality
+    tables_data = {}
     for table_name, columns in json_payload.items():  # Updated to match new structure
         st.subheader(table_name)  # Display table name as a subheader
+        tables_data[table_name] = {}
         for column in columns:
             # Use session state to store input values with unique keys
             input_key = f"{table_name}_{column}"  # Create a unique key for each input
-            st.session_state.input_values[input_key] = st.text_input(f"{table_name} - {column}", 
-                                                                        value=st.session_state.input_values.get(input_key, ""))  # Text input for each column
+            column_description = st.text_input(f"{table_name} - {column} Description", 
+                                                value=st.session_state.input_values.get(input_key, ""))  # Text input for each column description
+            
+            # Store the column description in the tables_data dictionary
+            tables_data[table_name][column] = column_description  # Map column to its description
+
+    # Store the structured data in session state
+    st.session_state.tables_data = tables_data # Text input for each column
 
 elif tab == "Q&A":
-    qa_functionality(st.session_state.input_values)  # Pass input_values to the Q&A functionality
+    qa_functionality(st.session_state.tables_data)  # Pass input_values to the Q&A functionality
 
 # ... existing code ...
