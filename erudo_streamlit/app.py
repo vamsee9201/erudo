@@ -88,8 +88,8 @@ db_password = "mysecretpassword"
 db_host = "localhost"
 db_port = "5433"
 
-if 'input_values' not in st.session_state:
-    st.session_state.input_values = {}
+if 'tables_data' not in st.session_state:
+    st.session_state.tables_data = {}
 
 # Initialize json_payload in session state if not already done
 if 'json_payload' not in st.session_state:
@@ -111,18 +111,23 @@ if tab == "Admin":
     json_payload = st.session_state.json_payload
 
     # Existing admin functionality
-    tables_data = {}
-    for table_name, columns in json_payload.items():  # Updated to match new structure
-        st.subheader(table_name)  # Display table name as a subheader
-        tables_data[table_name] = {}
+    tables_data = st.session_state.tables_data
+    for table_name, columns in st.session_state.json_payload.items():
+        st.subheader(table_name)
+        
+        # Initialize the dictionary for this table if it doesn't exist
+        if table_name not in tables_data:
+            tables_data[table_name] = {}
+
         for column in columns:
-            # Use session state to store input values with unique keys
-            input_key = f"{table_name}_{column}"  # Create a unique key for each input
-            column_description = st.text_input(f"{table_name} - {column} Description", 
-                                                value=st.session_state.input_values.get(input_key, ""))  # Text input for each column description
+            # Pre-fill value from tables_data if it exists, otherwise use ""
+            column_description = st.text_input(
+                f"{table_name} - {column} Description", 
+                value=tables_data[table_name].get(column, "")
+            )
             
-            # Store the column description in the tables_data dictionary
-            tables_data[table_name][column] = column_description  # Map column to its description
+            # Save it back into tables_data
+            tables_data[table_name][column] = column_description
 
     # Store the structured data in session state
     st.session_state.tables_data = tables_data # Text input for each column
