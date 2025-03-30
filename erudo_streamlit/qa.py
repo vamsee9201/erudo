@@ -66,5 +66,48 @@ def write_query(state: State):
     return {"query": result["query"]}
 
 
+def get_query_result(query: str):
+
+    return "This is a test result"
+
+def execute_query(state: State):
+    """Execute SQL query."""
+    query_result = get_query_result(state["query"])
+    return {"result": query_result}
+
+def generate_answer(state: State):
+    """Answer question using retrieved information as context."""
+    prompt = (
+        "Given the following user question, corresponding SQL query, "
+        "and SQL result, answer the user question.\n\n"
+        f'Question: {state["question"]}\n'
+        f'SQL Query: {state["query"]}\n'
+        f'SQL Result: {state["result"]}'
+    )
+    response = llm.invoke(prompt)
+    return {"answer": response.content}
+
+from langgraph.graph import START,END, StateGraph
+
+#graph_builder = StateGraph(State).add_sequence(
+#    [write_query, execute_query, generate_answer]
+#)
+#graph_builder.add_edge(START, "write_query")
+#graph = graph_builder.compile()
+
+graph_builder = StateGraph(State)
+graph_builder.add_node("write_query", write_query)
+graph_builder.add_node("execute_query", execute_query)
+graph_builder.add_node("generate_answer", generate_answer)
+
+graph_builder.add_edge(START, "write_query")
+graph_builder.add_edge("write_query", "execute_query")
+graph_builder.add_edge("execute_query", "generate_answer")
+graph_builder.add_edge("generate_answer", END)
+graph = graph_builder.compile()
+
+
+
+
 
 # Now , we need to use the text to good use and get the answer from the database.
