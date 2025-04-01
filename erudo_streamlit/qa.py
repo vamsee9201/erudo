@@ -34,6 +34,8 @@ def get_db_description(tables_data):
             explanation_text += f"- **Column:** {column} \n  **Description:** {description}\n"
         explanation_text += "\n"  # Add a newline for better separation between tables
     
+    explanation_text += "\nuser_id column is common between users and orders table"
+    
     return explanation_text   # st.write(tables_data) 
 
 #print(get_db_description(tables_data))
@@ -63,6 +65,10 @@ class QueryOutput(TypedDict):
 
 # Initialize the language model
 llm = init_chat_model("gpt-4o-mini", model_provider="openai")
+
+#add schema to the context
+#looping through to write a query(divide the task)
+
 
 def write_query(state: State):
     """Generate SQL query to fetch information."""
@@ -125,7 +131,8 @@ graph = graph_builder.compile()
 
 
 def get_answer(question: str, explanation_text: str):
-    return graph.invoke({"question": question, "explanation_text": explanation_text}).get("answer")
+    result = graph.invoke({"question": question, "explanation_text": explanation_text})
+    return result
 
 #get_answer("what is user_id 2's name?")
 
@@ -143,7 +150,7 @@ def qa_functionality(tables_data):
     
     # Display the structure of the tables and their columns
     explanation_text = get_db_description(tables_data)
-    #st.markdown(explanation_text)
+    st.markdown(explanation_text)
     
     # Input for the user's question with a unique key
     question = st.text_input("Type your question here:", key="user_question_input")
