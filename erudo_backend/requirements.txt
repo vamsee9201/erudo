@@ -1,2 +1,4 @@
 fastapi
 uvicorn[standard]
+google-cloud-firestore  # Firestore client library
+google-cloud-bigquery   # BigQuery client library
