@@ -7,7 +7,7 @@ import os
 #db = firestore.Client(database='erudo-operations', project='erudohq-dev')
 
 
-def upload_dataset_schema(dataset: dict,database:str,project:str):
+def upload_dataset_schema(dataset: dict, database: str, project: str):
     """
     Uploads a full dataset schema to Firestore.
 
