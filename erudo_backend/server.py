@@ -25,7 +25,8 @@ async def get_bigquery_details(dataset_id: str):
 async def upload_dataset_schema(dataset: dict):
     try:
         database = 'erudo-operations'
-        upload_dataset_schema(dataset, 'erudo-operations', project=PROJECT_ID)
+        print("upload request received")
+        upload_dataset_schema(dataset, 'erudo-operations',PROJECT_ID)
         return {"message": "Dataset schema uploaded successfully."}
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
