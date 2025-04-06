@@ -1,12 +1,12 @@
 All steps 
 
-create a service to create data in firestore instance. (1)
+create a service to create data in firestore instance. (1) (We have to test it on a different python file and also create a post api on the server.py file)
 
 create a service to ask a question, retrieve the data from the firestore, write query to get data from big query and and return the answer. (4)
 
-create a service to update the specific details in the firestore. (2)
+create a service to update the specific details in the firestore. (2) (We have to test it on a different python file and also create a post api on the server.py file)
 
-create a service to retrieve data from firestore. (5)
+create a service to retrieve data from firestore. (5) (We have to test it on a different python file and also create a post api on the server.py file)
 
-create a service to retrieve the data from big query. (3)
+create a service to retrieve the data from big query. (3) (We have to test it on a different python file and also create a post api on the server.py file)
 
