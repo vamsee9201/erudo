@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from bq_utils import get_tables_and_columns
+from fs_utils import upload_dataset_schema
 
 app = FastAPI()
 
@@ -19,6 +20,17 @@ async def get_bigquery_details(dataset_id: str):
         return {"tables": details}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/upload-dataset-schema")
+async def upload_dataset_schema(dataset: dict):
+    try:
+        upload_dataset_schema(dataset, database='erudo-operations', project=PROJECT_ID)
+        return {"message": "Dataset schema uploaded successfully."}
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 

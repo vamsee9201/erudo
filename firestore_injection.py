@@ -1,47 +1,78 @@
 #%%
 from google.cloud import firestore
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "erudo_service_account_key.json"  # Update with your JSON key file path
-db = firestore.Client(database='erudo-operations',project='erudohq-dev')
-from bigquery_fetch import get_tables_and_columns  # Import the function to fetch tables and columns
 
-# Updated dataset name
-dataset_id = "user_orders"
-dataset_doc = {
-    "name": "user_orders",
-    "description": "Dataset with user and order information",
-    "created_at": firestore.SERVER_TIMESTAMP
-}
+# Set Firestore credentials (update your path)
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "erudo_service_account_key.json"
+db = firestore.Client(database='erudo-operations', project='erudohq-dev')
 
-# Initialize descriptions for columns
-descriptions = {
-    "orders": {
-        "order_id": "Unique identifier for the order",
-        "user_id": "ID of the user who placed the order",
-        "product": "Product name",
-        "amount": "Order amount in USD",
-        "order_date": "Date of the order",
-    },
-    "users": {
-        "user_id": "Unique identifier for the user",
-        "name": "Full name of the user",
-        "email": "Email address of the user",
+
+def upload_dataset_schema(dataset: dict):
+    """
+    Uploads a full dataset schema to Firestore.
+
+    dataset: {
+        "name": str,
+        "description": str,
+        "tables": {
+            "table_name": {
+                "columns": {
+                    "column_name": {
+                        "description": str,
+                        "type": str
+                    },
+                    ...
+                }
+            },
+            ...
+        }
     }
-}
+    """
 
-# Fetch tables and columns from BigQuery
-project_id = "erudohq-dev"  # Replace with your Google Cloud project ID
-dataset_id = "user_orders"    # Replace with your BigQuery dataset ID
-table_schemas = get_tables_and_columns(project_id, dataset_id)  # Get schemas dynamically
+    dataset_id = dataset.get("name")
+    if not dataset_id or "tables" not in dataset:
+        raise ValueError("Dataset must include 'name' and 'tables'.")
 
-# Create 'user_orders' dataset document
-db.collection("datasets").document(dataset_id).set(dataset_doc)
+    # Save the dataset-level document
+    dataset_doc = {
+        "name": dataset_id,
+        "description": dataset.get("description", ""),
+        "created_at": firestore.SERVER_TIMESTAMP
+    }
 
-# Add tables as documents inside 'tables' subcollection
-for table_name, columns in table_schemas.items():
-    schema = {"columns": {col: {"description": descriptions.get(table_name, {}).get(col, "No description available"), "type": "string"} for col in columns}}  # Use descriptions
-    db.collection("datasets").document(dataset_id).collection("tables").document(table_name).set(schema)
+    db.collection("datasets").document(dataset_id).set(dataset_doc)
 
-print("Schema saved to Firestore under 'datasets/user_orders'.")
+    # Save each table as a document in the tables subcollection
+    for table_name, table_info in dataset["tables"].items():
+        db.collection("datasets").document(dataset_id).collection("tables").document(table_name).set(table_info)
+
+    print(f"Schema for '{dataset_id}' uploaded successfully to Firestore.")
+#%%
+
+user_orders_dataset = {
+        "name": "user_orders",
+        "description": "Dataset with user and order information",
+        "tables": {
+            "orders": {
+                "columns": {
+                    "order_id": {"description": "Unique identifier for the order", "type": "string"},
+                    "user_id": {"description": "ID of the user who placed the order", "type": "string"},
+                    "product": {"description": "Product name", "type": "string"},
+                    "amount": {"description": "Order amount in USD", "type": "float"},
+                    "order_date": {"description": "Date of the order", "type": "date"},
+                }
+            },
+            "users": {
+                "columns": {
+                    "user_id": {"description": "Unique identifier for the user", "type": "string"},
+                    "name": {"description": "Full name of the user", "type": "string"},
+                    "email": {"description": "Email address of the user", "type": "string"},
+                }
+            }
+        }
+    }
+
+upload_dataset_schema(user_orders_dataset)
+
 
 # %%
