@@ -1,5 +1,6 @@
 #%%
 from google.cloud import bigquery
+from google.cloud import firestore  # Import Firestore
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "erudo_service_account_key.json"  # Update with your JSON key file path
 
@@ -26,11 +27,9 @@ def get_tables_and_columns(project_id, dataset_id):
             result[table_name].append(schema_field.name)  # Append column name to the list
 
     return result
-
-# Example usage
+#%%  
 project_id = "erudohq-dev"  # Replace with your Google Cloud project ID
 dataset_id = "user_orders"    # Replace with your BigQuery dataset ID
-
 tables_and_columns = get_tables_and_columns(project_id, dataset_id)
 print(tables_and_columns) 
 # %%
