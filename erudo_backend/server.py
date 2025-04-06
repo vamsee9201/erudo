@@ -21,8 +21,8 @@ async def get_bigquery_details(dataset_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/upload-dataset-schema")
-async def upload_dataset_schema(dataset: dict):
+@app.post("/upload-schema")
+async def upload_schema(dataset: dict):
     try:
         database = 'erudo-operations'
         print("upload request received")
