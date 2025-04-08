@@ -36,6 +36,7 @@ async def upload_schema(dataset: dict):
 @app.get("/dataset/{dataset_id}")
 async def get_dataset_details(dataset_id: str):
     try:
+        print(dataset_id)
         details = fetch_dataset_details(dataset_id, 'erudo-operations', PROJECT_ID)
         if details is None:
             raise HTTPException(status_code=404, detail="Dataset not found.")
