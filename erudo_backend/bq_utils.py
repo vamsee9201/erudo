@@ -26,3 +26,15 @@ def get_tables_and_columns(project_id, dataset_id):
             result[table_name].append(schema_field.name)  # Append column name to the list
 
     return result
+
+def execute_query(project_id, query):
+    # Create a BigQuery client
+    client = bigquery.Client(project=project_id)
+    
+    # Execute the query
+    query_job = client.query(query)
+    
+    # Wait for the job to complete and return the results
+    results = query_job.result()
+    
+    return [dict(row) for row in results]  # Convert rows to dictionaries

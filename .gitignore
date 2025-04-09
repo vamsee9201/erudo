@@ -1,3 +1,5 @@
 /erudoenv
 /erudo_streamlit/openai_key.json
 erudo_service_account_key.json
+openai_key.json
+/erudo_backend/openai_key.json
