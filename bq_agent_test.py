@@ -24,3 +24,10 @@ results = execute_query("erudohq-dev",query)
 print(results)
 
 # %%
+from typing_extensions import TypedDict
+class State(TypedDict):
+    question: str
+    query: str
+    result: str
+    answer: str
+    explanation_text: str
