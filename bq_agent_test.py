@@ -29,3 +29,8 @@ results = execute_query("erudohq-dev",query)
 print(results)
 
 # %%
+#todo items
+#create an get explanation text function. Where we would pass in the table and columns data, it should return the explanation text.
+#Using that create a write query function. 
+#Make sure the write query function is able to write big query sql style query. 
+#Create a graph and test it. 
