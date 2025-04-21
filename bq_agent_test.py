@@ -119,4 +119,33 @@ def generate_answer(state: State):
     )
     response = llm.invoke(prompt)
     return {"answer": response.content}
+#%%
+from langgraph.graph import START,END, StateGraph
 
+#graph_builder = StateGraph(State).add_sequence(
+#    [write_query, execute_query, generate_answer]
+#)
+#graph_builder.add_edge(START, "write_query")
+#graph = graph_builder.compile()
+
+graph_builder = StateGraph(State)
+graph_builder.add_node("write_query", write_query)
+graph_builder.add_node("execute_query", execute_query)
+graph_builder.add_node("generate_answer", generate_answer)
+
+graph_builder.add_edge(START, "write_query")
+graph_builder.add_edge("write_query", "execute_query")
+graph_builder.add_edge("execute_query", "generate_answer")
+graph_builder.add_edge("generate_answer", END)
+graph = graph_builder.compile()
+
+#%%
+# from IPython.display import Image, display
+
+# display(Image(graph.get_graph().draw_mermaid_png()))
+
+
+
+def get_answer(question: str, explanation_text: str):
+    result = graph.invoke({"question": question, "explanation_text": explanation_text})
+    return result
