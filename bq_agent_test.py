@@ -80,20 +80,6 @@ class QueryOutput(TypedDict):
 
     query: Annotated[str, ..., "Syntactically valid SQL query."]
 
-
-def write_query(question,data):
-    """Generate SQL query to fetch information."""
-    # Updated prompt to include explanation text and database details
-    explanation_text = get_explanation_text(data)
-    prompt = (
-        f"Write a big query SQL query to answer the question: '{question}'. "
-        f"Use the following explanation text to help you write the query: {explanation_text}"
-    )
-    structured_llm = llm.with_structured_output(QueryOutput)
-    result = structured_llm.invoke(prompt)
-    return {"query": result["query"]}
-#%%
-write_query("What is the total amount of orders for each user?",sample_explanation_json)
 #%%
 from typing_extensions import TypedDict
 class State(TypedDict):
@@ -101,7 +87,23 @@ class State(TypedDict):
     query: str
     result: str
     answer: str
-    explanation_text: str
+    explanation_json : dict
+#%%
+def write_query(state: State):
+    """Generate SQL query to fetch information."""
+    # Updated prompt to include explanation text and database details
+    explanation_text = get_explanation_text(state["explanation_json"])
+    prompt = (
+        f"Write a big query SQL query to answer the question: '{state['question']}'. "
+        f"Use the following explanation text to help you write the query: {explanation_text}"
+    )
+    structured_llm = llm.with_structured_output(QueryOutput)
+    result = structured_llm.invoke(prompt)
+    tempquery = "SELECT * FROM `erudohq-dev.user_orders.orders` LIMIT 1000"
+    return {"query": tempquery}
+#%%
+write_query({"question":"What is the total amount of orders for each user?", "explanation_json":sample_explanation_json})
+
 #%%
 def execute_query(state: State):
     """Execute SQL query."""
@@ -146,6 +148,9 @@ graph = graph_builder.compile()
 
 
 
-def get_answer(question: str, explanation_text: str):
-    result = graph.invoke({"question": question, "explanation_text": explanation_text})
+def get_answer(question: str, explanation_json: dict):
+    result = graph.invoke({"question": question, "explanation_json": explanation_json})
     return result
+#%%
+get_answer("what did user_id 1 order?",sample_explanation_json)
+#%%
