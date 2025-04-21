@@ -6,17 +6,17 @@ from langchain.chat_models import init_chat_model
 import json
 #%%
 #This method is used to execute a query on BigQuery and return the results as a list of dictionaries
-
-import os
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'erudo_service_account_key.json'
-llm = init_chat_model("gpt-4o-mini", model_provider="openai")
-#%%
 with open('openai_key.json', 'r') as file:
     data = json.load(file)
 os.environ['OPENAI_API_KEY'] = data["api_key"]
 
+PROJECT_ID = "erudohq-dev"
 #%%
-def execute_query(project_id, query):
+import os
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'erudo_service_account_key.json'
+llm = init_chat_model("gpt-4o-mini", model_provider="openai")
+#%%
+def get_query_result(project_id, query):
     # Create a BigQuery client
     client = bigquery.Client(project=project_id)
     
@@ -29,7 +29,7 @@ def execute_query(project_id, query):
     return [dict(row) for row in results] 
 #%%
 query = "SELECT * FROM `erudohq-dev.user_orders.orders` LIMIT 1000"
-results = execute_query("erudohq-dev",query)
+results = get_query_result("erudohq-dev",query)
 print(results)
 #%%
 #todo items
@@ -91,8 +91,32 @@ def write_query(question,data):
     )
     structured_llm = llm.with_structured_output(QueryOutput)
     result = structured_llm.invoke(prompt)
-
     return {"query": result["query"]}
 #%%
 write_query("What is the total amount of orders for each user?",sample_explanation_json)
 #%%
+from typing_extensions import TypedDict
+class State(TypedDict):
+    question: str
+    query: str
+    result: str
+    answer: str
+    explanation_text: str
+#%%
+def execute_query(state: State):
+    """Execute SQL query."""
+    query_result = get_query_result(project_id=PROJECT_ID, query=state["query"])
+    return {"result": query_result}
+
+def generate_answer(state: State):
+    """Answer question using retrieved information as context."""
+    prompt = (
+        "Given the following user question, corresponding SQL query, "
+        "and SQL result, answer the user question.\n\n"
+        f'Question: {state["question"]}\n'
+        f'SQL Query: {state["query"]}\n'
+        f'SQL Result: {state["result"]}'
+    )
+    response = llm.invoke(prompt)
+    return {"answer": response.content}
+
