@@ -39,7 +39,7 @@ print(results)
 #Create a graph and test it.
 # integrate the graph in the fastapi server. 
 sample_explanation_json = {
-  "orders": {
+  "erudohq-dev.user_orders.orders": {
     "description": "This table stores information about each order placed by users.",
     "columns": {
       "order_id": "Unique identifier for each order.",
@@ -49,7 +49,7 @@ sample_explanation_json = {
       "order_date": "Date when the order was placed."
     }
   },
-  "users": {
+  "erudohq-dev.user_orders.users": {
     "description": "This table contains user profile information.",
     "columns": {
       "user_id": "Unique identifier for each user.",
@@ -99,8 +99,8 @@ def write_query(state: State):
     )
     structured_llm = llm.with_structured_output(QueryOutput)
     result = structured_llm.invoke(prompt)
-    tempquery = "SELECT * FROM `erudohq-dev.user_orders.orders` LIMIT 1000"
-    return {"query": tempquery}
+    #tempquery = "SELECT * FROM `erudohq-dev.user_orders.orders` LIMIT 1000"
+    return {"query": result["query"]}
 #%%
 write_query({"question":"What is the total amount of orders for each user?", "explanation_json":sample_explanation_json})
 
@@ -150,7 +150,10 @@ graph = graph_builder.compile()
 
 def get_answer(question: str, explanation_json: dict):
     result = graph.invoke({"question": question, "explanation_json": explanation_json})
-    return result
+    return result["answer"]
+
+#%%
+#graph.invoke({"question":"what did user_id 1 order?", "explanation_json":sample_explanation_json}))
 #%%
 get_answer("what did user_id 1 order?",sample_explanation_json)
 #%%
