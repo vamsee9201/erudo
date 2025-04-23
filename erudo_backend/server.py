@@ -46,7 +46,11 @@ async def get_dataset_details(dataset_id: str):
     
 
 @app.post("/get-answer")
-async def get_answer(question: str, explanation_json: dict):
+async def get_answer(request: dict):
+    question = request["question"]
+    print("question ----->",question)
+    explanation_json = request["explanation_json"]
+    print("explanation_json ----->",explanation_json)
     answer = get_answer(question, explanation_json)
     return {"answer": answer}
 
