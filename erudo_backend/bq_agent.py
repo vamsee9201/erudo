@@ -8,7 +8,7 @@ import json
 #This method is used to execute a query on BigQuery and return the results as a list of dictionaries
 with open('openai_key.json', 'r') as file:
     data = json.load(file)
-os.environ['OPENAI_API_KEY'] = data["api_key"]
+#os.environ['OPENAI_API_KEY'] = os.environ.get("")
 
 PROJECT_ID = "erudohq-dev"
 #%%
