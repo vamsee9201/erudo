@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from bq_utils import get_tables_and_columns
 from fs_utils import upload_dataset_schema, fetch_dataset_details
-
+from bq_agent import get_answer
 app = FastAPI()
 
 # Define the project ID as a variable
@@ -44,6 +44,11 @@ async def get_dataset_details(dataset_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+
+@app.post("/get-answer")
+async def get_answer(question: str, explanation_json: dict):
+    answer = get_answer(question, explanation_json)
+    return {"answer": answer}
 
 
 
