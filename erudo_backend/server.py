@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from bq_utils import get_tables_and_columns
 from fs_utils import upload_dataset_schema, fetch_dataset_details
-from bq_agent import get_answer
+from bq_agent import get_llm_response
 app = FastAPI()
 
 # Define the project ID as a variable
@@ -51,7 +51,7 @@ async def get_answer(request: dict):
     print("question ----->",question)
     explanation_json = request["explanation_json"]
     print("explanation_json ----->",explanation_json)
-    answer = get_answer(question, explanation_json)
+    answer = get_llm_response(question, explanation_json)
     return {"answer": answer}
 
 

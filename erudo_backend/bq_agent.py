@@ -156,7 +156,7 @@ graph = graph_builder.compile()
 
 
 
-def get_answer(question: str, explanation_json: dict):
+def get_llm_response(question: str, explanation_json: dict):
     result = graph.invoke({"question": question, "explanation_json": explanation_json})
     return result["answer"]
 
