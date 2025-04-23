@@ -15,7 +15,7 @@ import json
 PROJECT_ID = "erudohq-dev"
 #%%
 import os
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'erudo_service_account_key.json'
+#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'erudo_service_account_key.json'
 llm = init_chat_model("gpt-4o-mini", model_provider="openai")
 #%%
 def get_query_result(project_id, query):
