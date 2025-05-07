@@ -2,7 +2,23 @@ from fastapi import FastAPI, HTTPException
 from bq_utils import get_tables_and_columns
 from fs_utils import upload_dataset_schema, fetch_dataset_details
 from bq_agent import get_llm_response
+from fastapi.middleware.cors import CORSMiddleware
+origins = [
+    "http://localhost",
+    "http://localhost:5173",
+]
+
+
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Define the project ID as a variable
 PROJECT_ID = "erudohq-dev"  # Replace with your actual project ID
