@@ -43,12 +43,18 @@ const requestOptions = {
   body: raw,
   redirect: "follow"
 };
+let result = {};
 
-fetch("https://erudo-387613598631.us-central1.run.app/get-answer", requestOptions)
-  .then((response) => response.text())
-  .then((result) => console.log(result))
+  fetch("https://erudo-387613598631.us-central1.run.app/get-answer", requestOptions)
+  .then((response) => response.json())
+  .then((result) => {
+    console.log(result);
+    setResponse(result["answer"]);
+  }
+  )
   .catch((error) => console.error(error));
 
+  
     // end
   };
 
@@ -63,7 +69,7 @@ fetch("https://erudo-387613598631.us-central1.run.app/get-answer", requestOption
       <button onClick={handleSubmit}>
         Submit
       </button>
-      {response && <div>Response: {response}</div>}
+      {response && <div>Answer: {response}</div>}
     </div>
   );
 };
