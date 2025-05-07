@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 origins = [
     "http://localhost",
     "http://localhost:5173",
-    "https://erudo-vamsee-krishnas-projects.vercel.app/"
+    "https://erudo-vamsee-krishnas-projects.vercel.app"
 ]
 
 
