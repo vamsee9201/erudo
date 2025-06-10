@@ -30,6 +30,6 @@ Upload your data or connect to your system, then simply ask questions in plain E
 
 ## 📩 Contact
 
-For inquiries, email [yourname@yourcompany.com](mailto:yourname@yourcompany.com)
+For inquiries, email [vamseekrishna9201@gmail.com](mailto:vamseekrishna9201@gmail.com)
 
 > Empowering smarter decisions with AI-driven data intelligence.
